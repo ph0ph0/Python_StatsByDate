@@ -77,13 +77,46 @@ for row in df.itertuples():
 df.insert(3, "OrderOpenDay", OpenTimeDayArray)
 df.insert(5, "OrderCloseDay", CloseTimeDayArray)
 
-print(df)
+# print(df)
 
 # Groupby date
 groupedByDate = df.groupby(df["OpenTime"].dt.date)["Profit"].agg(
     [np.ma.count, np.sum, np.mean, np.median, stats.mode, np.ptp, stats.iqr, np.std, "min", "max"])
 
-# Groupby week
-groupedByWeek = df["OpenTime"].resample('W')
+# Groupby week - This gives week as numbers in the year
+groupedByWeek = df.groupby(df["OpenTime"].dt.week)["Profit"].agg(
+    [np.ma.count, np.sum, np.mean, np.median, stats.mode, np.ptp, stats.iqr, np.std, "min", "max"])
 
-print(groupedByWeek)
+# Groupby week - This gives weeks as dates
+df_ByWeek = df.set_index("OpenTime")
+
+df_ByWeek = df_ByWeek.to_period(freq="w")
+
+df_ByWeek = df_ByWeek.reset_index()
+
+groupedByWeek = df_ByWeek.groupby(df_ByWeek["OpenTime"])["Profit"].agg(
+    [np.ma.count, np.sum, np.mean, np.median, stats.mode, np.ptp, stats.iqr, np.std, "min", "max"])
+
+
+# Groupby Month
+
+df_ByMonth = df.set_index("OpenTime")
+
+df_ByMonth = df_ByMonth.to_period(freq="m")
+
+df_ByMonth = df_ByMonth.reset_index()
+
+groupedByMonth = df_ByMonth.groupby(df_ByMonth["OpenTime"])["Profit"].agg(
+    [np.ma.count, np.sum, np.mean, np.median, stats.mode, np.ptp, stats.iqr, np.std, "min", "max"])
+
+# Convert all to dataframes
+
+df_GroupedByDate = DataFrame(groupedByDate).reset_index()
+df_GroupedByWeek = DataFrame(groupedByWeek).reset_index()
+df_GroupedByMonth = DataFrame(groupedByMonth).reset_index()
+
+# Save dataframes to CSV
+
+#
+
+print(df_GroupedByWeek)
