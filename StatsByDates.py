@@ -89,11 +89,8 @@ groupedByWeek = df.groupby(df["OpenTime"].dt.week)["Profit"].agg(
 
 # Groupby week - This gives weeks as dates
 df_ByWeek = df.set_index("OpenTime")
-
 df_ByWeek = df_ByWeek.to_period(freq="w")
-
 df_ByWeek = df_ByWeek.reset_index()
-
 groupedByWeek = df_ByWeek.groupby(df_ByWeek["OpenTime"])["Profit"].agg(
     [np.ma.count, np.sum, np.mean, np.median, stats.mode, np.ptp, stats.iqr, np.std, "min", "max"])
 
@@ -101,11 +98,8 @@ groupedByWeek = df_ByWeek.groupby(df_ByWeek["OpenTime"])["Profit"].agg(
 # Groupby Month
 
 df_ByMonth = df.set_index("OpenTime")
-
 df_ByMonth = df_ByMonth.to_period(freq="m")
-
 df_ByMonth = df_ByMonth.reset_index()
-
 groupedByMonth = df_ByMonth.groupby(df_ByMonth["OpenTime"])["Profit"].agg(
     [np.ma.count, np.sum, np.mean, np.median, stats.mode, np.ptp, stats.iqr, np.std, "min", "max"])
 
@@ -116,6 +110,15 @@ df_GroupedByWeek = DataFrame(groupedByWeek).reset_index()
 df_GroupedByMonth = DataFrame(groupedByMonth).reset_index()
 
 # Save dataframes to CSV
+
+todaysDate = date.today().strftime("%Y_%m_%d")
+gBD_Location = r'ProcessedData/Groupings/' + todaysDate + r"byDay"
+gBW_Location = r'ProcessedData/Groupings/' + todaysDate + r"byWeek"
+gBM_Location = r'ProcessedData/Groupings/' + todaysDate + r"byMonth"
+
+df_GroupedByDate.to_csv(gBD_Location, index=False)
+df_GroupedByWeek.to_csv(gBW_Location, index=False)
+df_GroupedByMonth.to_csv(gBM_Location, index=False)
 
 #
 
